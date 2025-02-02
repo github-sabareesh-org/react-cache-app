@@ -29,7 +29,16 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: ${{inputs.node-choice}}
+            - name: Download-cached-dep
+              id: cache
+              uses: actions/cache@v3
+              if: ${{inputs.use-cache}}
+              with:
+                key: deps-node-module-${{hashFiles('react-app/package-lock.json')}}
+                path: react-app/node_modules
+
             - name: install the dependencies
+              if: steps.cache.outputs.cache-hit != 'true'
               run: npm ci  
             - name: Testing
               run: npm run test
